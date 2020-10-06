@@ -1,3 +1,4 @@
+import axios from "axios";
 
 
 export default class CarsService {
@@ -13,6 +14,26 @@ export default class CarsService {
            
            
             
+    }
+    addACar(newCar){
+        const newwCar = {
+            brand: newCar.brand,
+            model: newCar.model,
+            year: newCar.year,
+            maxSpeed: newCar.maxSpeed,
+            isAutomatic: false,
+            engine: newCar.engine,
+            numberOfDoors: newCar.numberOfDoors
+        }
+        console.log(newwCar);
+        axios.post('http://localhost:3000/api/cars', newwCar)
+            .then(function(response){
+                console.log(response)
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+
     }
 
 }
