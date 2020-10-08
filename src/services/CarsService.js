@@ -2,15 +2,14 @@ import axios from "axios";
 
 
 export default class CarsService {
-    realResponse = [];
-    list() {
-        return this.cars;
-    }
+
+    
    async getCars() {
     
             // const response = await axios.get('http://localhost:3000/api/cars')
          
-        //    axios.get('http://localhost:3000/api/cars').then(response => this.cars = response.data);
+         const {data} =  await axios.get('http://localhost:3000/api/cars');
+         return data
            
            
             
@@ -35,6 +34,7 @@ export default class CarsService {
             })
 
     }
+
 
 }
 

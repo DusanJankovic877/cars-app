@@ -10,7 +10,7 @@
         <th>isAutomatic</th>
         <th>engine</th>
         <th>numberOfDoors</th>
-        <th></th>
+
       </tr>
       <tr v-for="car in cars" :key="car.id">
         <td>{{car.brand}}</td>
@@ -28,21 +28,28 @@
 </template>
 
 <script>
-// import { carsService } from '../services/CarsService' 
-import axios from 'axios'
+import { carsService } from '../services/CarsService' 
+// import axios from 'axios'
 
 
 export default {
   name: 'Cars',
+ 
   data() {
     return {
-       cars: []
+       cars: [],
+      
+
     }
   },
 
-  created() {
-     axios.get('http://localhost:3000/api/cars').then(response => this.cars = response.data)
-  }
+
+ async created() {
+      this.cars = await carsService.getCars()
+     
+
+  },
+
   
 }
   
