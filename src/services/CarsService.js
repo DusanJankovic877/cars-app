@@ -1,46 +1,22 @@
 import axios from "axios";
 
-
 export default class CarsService {
 
-    
-   async getCars() {
-    
-            // const response = await axios.get('http://localhost:3000/api/cars')
-         
-         const {data} =  await axios.get('http://localhost:3000/api/cars');
-         return data
-           
-           
-            
+    async getCars() {
+        const {data} =  await axios.get('http://localhost:3000/api/cars');
+        return data
+    }
+    async getACar(id){
+        const {data} = await axios.get('http://localhost:3000/api/cars/' + id)
+        return data
     }
     addACar(newCar){
-        const newwCar = {
-            brand: newCar.brand,
-            model: newCar.model,
-            year: newCar.year,
-            maxSpeed: newCar.maxSpeed,
-            isAutomatic: false,
-            engine: newCar.engine,
-            numberOfDoors: newCar.numberOfDoors
-        }
-        console.log(newwCar);
-        axios.post('http://localhost:3000/api/cars', newwCar)
-            .then(function(response){
-                console.log(response)
-            })
-            .catch(function(error){
-                console.log(error)
-            })
-
+        axios.post('http://localhost:3000/api/cars', newCar)
     }
 
-
+    editACar(car){
+        return axios.put(`http://localhost:3000/api/cars/${car.id}`, car)
+    }
 }
-
-// http://localhost:3000/api/explorer/cars
-
-
-
 
 export const carsService = new CarsService();

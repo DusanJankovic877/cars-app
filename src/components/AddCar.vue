@@ -1,26 +1,29 @@
 <template>
 <div>
-  <h1>Add Car</h1>
+  
+  <h1 v-if="$route.params.id">Edit Car</h1>
+  <h1 v-else>Add Car</h1>
 
-  <form @submit.prevent="addCar">
+  <form @submit.prevent="onSubmit">
+    <!-- BRAND -->
     <div class="form-group row">
       <label for="brand" class="col-4 col-form-label">Brand</label>
       <div class="col-8">
         <div class="input-group">
-          <input id="brand" v-model="car.brand" type="text" required="required" class="form-control here">
+          <input id="brand" v-model="car.brand" type="text" required="required" class="form-control here" minlength="2" />
         </div>
       </div>
     </div>
-
+    <!-- MODEL -->
     <div class="form-group row">
       <label for="model" class="col-4 col-form-label">Model</label>
       <div class="col-8">
         <div class="input-group">
-          <input id="model" v-model="car.model" type="text" required="required" class="form-control here">
+          <input id="model" v-model="car.model" type="text" required="required" class="form-control here" minlength="2" >
         </div>
       </div>
     </div>
-
+    <!-- YEAR -->
     <div class="form-group row">
       <label for="year" class="col-4 col-form-label">Year</label>
       <div class="col-8">
@@ -31,11 +34,11 @@
         </div>
         </div>
     </div>
-
+  <!-- MAX SPEED -->
     <div class="form-group row">
       <label for="maxSpeed" class="col-4 col-form-label">Max Speed</label>
       <div class="col-8">
-        <input id="maxSpeed" v-model="car.maxSpeed" type="number" required="required" class="form-control here">
+        <input id="maxSpeed" v-model="car.maxSpeed" type="number" class="form-control here">
       </div>
     </div>
     <div class="form-group row">
@@ -46,34 +49,35 @@
         </div>
       </div>
     </div>
-
+  <!-- ENGINE -->
     <div class="form-group row">
       <label for="checkbox" class="col-4 col-form-label">Engine</label>
       <div class="col-8">
 
         <div class="input-group">
           <div class="form-check">   
-            <input class="form-check-input" type="radio" id="petrol" value="petrol" v-model="car.engine">
+            <input class="form-check-input" name="engine" type="radio" id="petrol" value="petrol" v-model="car.engine" required="required" >
             <label class="form-check-label" for="petrol">petrol</label>
           </div>
 
           <div class="form-check">
-            <input class="form-check-input" type="radio" id="diesel" value="diesel" v-model="car.engine">
+            <input class="form-check-input" name="engine" type="radio" id="diesel" value="diesel" v-model="car.engine">
             <label class="form-check-label" for="diesel">diesel</label>
           </div>
 
           <div class="form-check">
-            <input class="form-check-input" type="radio" id="electric" value="electric" v-model="car.engine">
+            <input class="form-check-input" name="engine" type="radio" id="electric" value="electric" v-model="car.engine">
             <label class="form-check-label" for="electric">electric</label>
           </div>
 
           <div class="form-check">
-            <input class="form-check-input" type="radio" id="hybrid" value="hybrid" v-model="car.engine"></div>
+            <input class="form-check-input" name="engine" type="radio" id="hybrid" value="hybrid" v-model="car.engine">
             <label class="form-check-label" for="hybrid">hybrid</label>
           </div>
+        </div>
       </div>
     </div>
-
+  <!-- NUMBER OF DOORS -->
     <div class="form-group row">
       <label for="numberOfDoors" class="col-4 col-form-label">Number of Doors</label>
       <div class="col-8">
@@ -85,14 +89,15 @@
 
     <div class="form-group row">
       <div class="offset-4 col-8">
-        <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+        <button v-if="$route.params.id" name="submit" type="submit" class="btn btn-primary">Edit Car</button>
+        <button v-else name="submit" type="submit" class="btn btn-primary">Add Car</button>
       </div>
     </div>
   </form>
   <!-- RESET FORM -->
   <div class="form-group row">
       <div class="offset-4 col-8">
-          <button @click="resetForm" name="submit" type="submit" class="btn btn-primary">reset form</button>
+          <button @click="resetForm" name="submit" type="submit" class="btn btn-primary">Reset form</button>
       </div>
   </div>
   <!-- PREVIEW FORM -->
@@ -101,7 +106,7 @@
           <button @click="previewForm" name="submit" type="submit" class="btn btn-primary">Preview form</button>
       </div>
   </div>
-
+{{car}}
 </div>
 </template>
 
@@ -120,6 +125,7 @@ return {
     
     cars: [],    
     car: {
+      
         brand: '',
         model: '',
         year: '',
@@ -130,28 +136,53 @@ return {
     }
 }
   },
-  created(){
-      let range = (start, stop, step=1) => Array(stop - start).fill(start).map((x, y) => x + y * step)
+async created(){
+  
+       if(this.$route.params.id){
+       this.car = await carsService.getACar(this.$route.params.id)
+     }
+
+      let range =(start, stop, step=1) => Array(stop - start).fill(start).map((x, y) => x + y * step)
       this.yearsArray = range(1990, 2019);
-     
+
   },
 methods: {
-    addCar(){
 
+  onSubmit(){
+    if(this.$route.params.id){
+      this.editCar()
+    }
+    else {
+      this.addCar()
+    }
+  },
+
+    addCar(){
         carsService.addACar(this.car);
        this.$router.push('cars')
     },
+
+    editCar(){
+      console.log(this.car);
+      carsService.editACar(this.car).then(async () =>{
+        this.car = await carsService.getPosts()
+      });
+       this.$router.push({name:'cars'})
+    },
+
+
+
+    // FORM METHODS
     resetForm(){
       return this.car =  {}
     },
     previewForm(){
-      alert(this.car.brand + ' ' + 
-      this.car.model + ' ' + 
-      this.car.year + ' ' + 
-      this.car.maxSpeed + ' ' + 
-      this.car.isAutomatic + ' ' + 
-      this.car.engine + ' ' + 
-      this.car.numberOfDoors )
+        let string = '';
+        Object.keys(this.car).forEach(key => {
+          string += `${this.car[key]} `;
+        });
+        alert(string);
+  
 
     }
     

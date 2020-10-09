@@ -10,7 +10,7 @@
         <th>isAutomatic</th>
         <th>engine</th>
         <th>numberOfDoors</th>
-
+        <th></th>
       </tr>
       <tr v-for="car in cars" :key="car.id">
         <td>{{car.brand}}</td>
@@ -20,17 +20,16 @@
         <td>{{car.isAutomatic}}</td>
         <td>{{car.engine}}</td>
         <td>{{car.numberOfDoors}}</td>
+        <td>
+          <router-link :to="{ name: 'edit-car', params: { id: car.id}}">Edit Car</router-link>
+          </td>
       </tr>
-
-
     </table>
   </div>
 </template>
 
 <script>
 import { carsService } from '../services/CarsService' 
-// import axios from 'axios'
-
 
 export default {
   name: 'Cars',
@@ -38,7 +37,6 @@ export default {
   data() {
     return {
        cars: [],
-      
 
     }
   },
@@ -46,14 +44,10 @@ export default {
 
  async created() {
       this.cars = await carsService.getCars()
-     
 
   },
-
   
 }
-  
-
 
 </script>
 
