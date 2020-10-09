@@ -86,12 +86,12 @@
           <button name="submit" type="submit" class="btn btn-primary">Submit</button>
         </div>
       </div>
-        <!-- <div class="form-group row">
-            <div class="offset-4 col-8">
-                <button @click="reset" name="submit" type="submit" class="btn btn-primary">reset form</button>
-            </div>
-      </div> -->
 </form>
+      <div class="form-group row">
+          <div class="offset-4 col-8">
+              <button @click="resetForm" name="submit" type="submit" class="btn btn-primary">reset form</button>
+          </div>
+      </div>
     </div>
 </template>
 
@@ -131,6 +131,9 @@ methods: {
         carsService.addACar(this.car);
        this.$router.push('cars')
     },
+    resetForm(){
+      return this.car =  {}
+    }
     
   
 }
