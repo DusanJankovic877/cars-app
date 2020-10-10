@@ -9,29 +9,44 @@
     <div class="form-group row">
       <label for="brand" class="col-4 col-form-label">Brand</label>
       <div class="col-8">
-        <div class="input-group">
-          <input id="brand" v-model="car.brand" type="text" required="required" class="form-control here" minlength="2" />
-        </div>
+        <ValidationProvider rules="min:2|required" v-slot="{ errors }">
+          <div class="input-group">
+            <input id="brand" v-model="car.brand" type="text" required="required" class="form-control here" minlength="2" />
+          </div>
+          <div class="alert alert-danger" v-if="errors[0]">
+              {{ errors[0] }}
+          </div>
+        </ValidationProvider>
       </div>
     </div>
     <!-- MODEL -->
     <div class="form-group row">
       <label for="model" class="col-4 col-form-label">Model</label>
       <div class="col-8">
-        <div class="input-group">
-          <input id="model" v-model="car.model" type="text" required="required" class="form-control here" minlength="2" >
-        </div>
+        <ValidationProvider rules="min:2|required" v-slot="{ errors }">
+          <div class="input-group">
+            <input id="model" v-model="car.model" type="text" required="required" class="form-control here" minlength="2" >
+          </div>
+          <div class="alert alert-danger" v-if="errors[0]">
+              {{ errors[0] }}
+          </div>
+        </ValidationProvider>
       </div>
     </div>
     <!-- YEAR -->
     <div class="form-group row">
       <label for="year" class="col-4 col-form-label">Year</label>
       <div class="col-8">
-        <div class="input-group">
-          <select class="form-control" v-model="car.year">
-            <option v-for="year in yearsArray" :key="year">{{year}}</option>
-          </select>
-        </div>
+        <ValidationProvider rules="required" v-slot="{ errors }">
+          <div class="input-group">
+            <select class="form-control" v-model="car.year">
+              <option v-for="year in yearsArray" :key="year">{{year}}</option>
+            </select>
+          </div>
+          <div class="alert alert-danger" v-if="errors[0]">
+                {{ errors[0] }}
+          </div>
+        </ValidationProvider>
         </div>
     </div>
   <!-- MAX SPEED -->
@@ -52,38 +67,47 @@
   <!-- ENGINE -->
     <div class="form-group row">
       <label for="checkbox" class="col-4 col-form-label">Engine</label>
+      
       <div class="col-8">
 
-        <div class="input-group">
-          <div class="form-check">   
-            <input class="form-check-input" name="engine" type="radio" id="petrol" value="petrol" v-model="car.engine" required="required" >
-            <label class="form-check-label" for="petrol">petrol</label>
-          </div>
+          <div class="input-group">
+            
+            <div class="form-check">   
+              <input class="form-check-input" name="engine" type="radio" id="petrol" value="petrol" v-model="car.engine" required="required" >
+              <label class="form-check-label" for="petrol">petrol</label>
+            </div>
 
-          <div class="form-check">
-            <input class="form-check-input" name="engine" type="radio" id="diesel" value="diesel" v-model="car.engine">
-            <label class="form-check-label" for="diesel">diesel</label>
-          </div>
 
-          <div class="form-check">
-            <input class="form-check-input" name="engine" type="radio" id="electric" value="electric" v-model="car.engine">
-            <label class="form-check-label" for="electric">electric</label>
-          </div>
+            <div class="form-check">
+              <input class="form-check-input" name="engine" type="radio" id="diesel" value="diesel" v-model="car.engine">
+              <label class="form-check-label" for="diesel">diesel</label>
+            </div>
 
-          <div class="form-check">
-            <input class="form-check-input" name="engine" type="radio" id="hybrid" value="hybrid" v-model="car.engine">
-            <label class="form-check-label" for="hybrid">hybrid</label>
+            <div class="form-check">
+              <input class="form-check-input" name="engine" type="radio" id="electric" value="electric" v-model="car.engine">
+              <label class="form-check-label" for="electric">electric</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" name="engine" type="radio" id="hybrid" value="hybrid" v-model="car.engine">
+              <label class="form-check-label" for="hybrid">hybrid</label>
+            </div>
           </div>
-        </div>
       </div>
+      
     </div>
   <!-- NUMBER OF DOORS -->
     <div class="form-group row">
       <label for="numberOfDoors" class="col-4 col-form-label">Number of Doors</label>
       <div class="col-8">
+        <ValidationProvider rules="required" v-slot="{ errors }">
         <div class="input-group">
           <input id="numberOfDoors" v-model="car.numberOfDoors" type="number" required="required" class="form-control here">
         </div>
+          <div class="alert alert-danger" v-if="errors[0]">
+                {{ errors[0] }}
+          </div>
+        </ValidationProvider>
       </div>
     </div>
 
@@ -106,12 +130,13 @@
           <button @click="previewForm" name="submit" type="submit" class="btn btn-primary">Preview form</button>
       </div>
   </div>
-{{car}}
+
 </div>
 </template>
 
 <script>
 import {carsService} from '../services/CarsService'
+
 
 
 export default {
@@ -120,7 +145,7 @@ export default {
   data(){
 return {  
     yearsArray: [], 
-
+    // errors: {},
     //car data
     
     cars: [],    
@@ -136,8 +161,10 @@ return {
     }
 }
   },
-async created(){
   
+
+async created(){
+
        if(this.$route.params.id){
        this.car = await carsService.getACar(this.$route.params.id)
      }
@@ -150,7 +177,7 @@ methods: {
 
   onSubmit(){
     if(this.$route.params.id){
-      this.editCar()
+    this.editCar()
     }
     else {
       this.addCar()
@@ -165,7 +192,7 @@ methods: {
     editCar(){
       console.log(this.car);
       carsService.editACar(this.car).then(async () =>{
-        this.car = await carsService.getPosts()
+        this.car = await carsService.getACar()
       });
        this.$router.push({name:'cars'})
     },
